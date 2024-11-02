@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "portus.fullname" . }}
@@ -49,9 +49,9 @@ spec:
             - name: PORTUS_DB_HOST
               value: {{ template "mariadb.fullname" . }}
             - name: PORTUS_DB_DATABASE
-              value: {{ .Values.mariadb.mariadbDatabase | quote }}
+              value: {{ .Values.mariadb.auth.database | quote }}
             - name: PORTUS_DB_USERNAME
-              value: {{ .Values.mariadb.mariadbUser | quote }}
+              value: {{ .Values.mariadb.auth.username | quote }}
             {{- if .Values.portus.config.ldap.authentication.enabled }}
             - name: PORTUS_LDAP_AUTHENTICATION_PASSWORD
               valueFrom:
@@ -63,14 +63,14 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ template "mariadb.fullname" . }}
-                  key: mariadb-password
+                  key: mariadb-root-password
             {{- else }}
             - name: PORTUS_DB_HOST
               value: {{ .Values.portus.dbHost }}
             - name: PORTUS_DB_DATABASE
-              value: {{ .Values.portus.dbDatabase }}
+              value: {{ .Values.mariadb.auth.database | quote }}
             - name: PORTUS_DB_USERNAME
-              value: {{ .Values.portus.dbUsername }}
+              value: {{ .Values.mariadb.auth.username | quote }}
             - name: PORTUS_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -129,14 +129,14 @@ spec:
             - name: PORTUS_DB_HOST
               value: {{ template "mariadb.fullname" . }}
             - name: PORTUS_DB_DATABASE
-              value: {{ .Values.mariadb.mariadbDatabase | quote }}
+              value: {{ .Values.mariadb.auth.database | quote }}
             - name: PORTUS_DB_USERNAME
-              value: {{ .Values.mariadb.mariadbUser | quote }}
+              value: {{ .Values.mariadb.auth.username | quote }}
             - name: PORTUS_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ template "mariadb.fullname" . }}
-                  key: mariadb-password
+                  key: mariadb-root-password
             {{- else }}
             - name: PORTUS_LOG_LEVEL
               valueFrom:
@@ -146,9 +146,9 @@ spec:
             - name: PORTUS_DB_HOST
               value: {{ .Values.portus.dbHost }}
             - name: PORTUS_DB_DATABASE
-              value: {{ .Values.portus.dbDatabase }}
+              value: {{ .Values.mariadb.auth.database | quote }}
             - name: PORTUS_DB_USERNAME
-              value: {{ .Values.portus.dbUsername }}
+              value: {{ .Values.mariadb.auth.username | quote }}
             - name: PORTUS_DB_PASSWORD
               valueFrom:
                 secretKeyRef:

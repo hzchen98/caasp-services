@@ -1,5 +1,5 @@
 {{- if .Values.nginx.ingress.enabled }}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ template "nginx.fullname" . }}
@@ -13,13 +13,18 @@ metadata:
     {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
+  ingressClassName: nginx
   rules:
     - host: {{ .Values.nginx.host | quote }}
       http:
         paths:
-          - backend:
-              serviceName: {{ template "nginx.fullname" . }}
-              servicePort: {{ .Values.nginx.service.port }}
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: {{ template "nginx.fullname" . }}
+                port:
+                    number: {{ .Values.nginx.service.port }}
   {{- if .Values.nginx.ingress.tls.enabled }}
   tls:
     - secretName: {{ .Values.nginx.ingress.tls.secretName | quote }}

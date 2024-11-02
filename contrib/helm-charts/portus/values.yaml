@@ -32,9 +32,9 @@ portus:
   ## only set db values if using existing database deployment
   ##
   # dbHost
-  # dbDatabase:
-  # dbUsername:
-  # dbPassword:
+  dbDatabase: "portus"
+  dbUsername: "portus"
+#   dbPassword:
 
   ## Defaults to a random 10-character alphanumeric string if not set
   ##
@@ -240,6 +240,8 @@ registry:
 ## Default values for Nginx.
 ##
 nginx:
+  host: "registry.viajesdespejados.com"
+
   replicas: 1
 
   ## image configuration.
@@ -256,7 +258,7 @@ nginx:
     ##
     type: "ClusterIP"
 
-    port:
+    port: 80
     # nodePort:
 
     ## Annotation to be added to the service
@@ -273,11 +275,12 @@ nginx:
   ## ingress configuration.
   ##
   ingress:
-    enabled: false
+    enabled: true
 
     ## Anntations to be added to the web ingress
     ##
-    # annotations:
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
     #   kubernetes.io/ingress.class: "nginx"
     #   nginx.ingress.kubernetes.io/proxy-body-size: "0"
     #   kubernetes.io/ingress.allow-http: "false"
@@ -286,12 +289,12 @@ nginx:
     ## TLS configuration
     ## the ingress host must be covered by the key/cert in order for TLS to work properly
     ##
-    # tls:
-    #   enabled: false
+    tls:
+     enabled: true
 
       ## Secrets containing SSL key and cert must be manually created in the namespace
       ##
-      # secretName: "portus-tls"
+     secretName: "portus-tls"
 
   ## Resource configuration.
   ##
@@ -316,8 +319,9 @@ mariadb:
     accessMode: "ReadWriteOnce"
     size: "8Gi"
 
-  ## Configuration values for Mariadb.
-  ## must match Portus database values.
-  ##
-  mariadbUser: "portus"
-  mariadbDatabase: "portus"
+  auth:
+    database: "portus"
+    username: "portus"
+    password: "not-a-secure-password"
+    rootPassword: "not-a-secure-password"
+
